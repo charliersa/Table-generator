@@ -22,27 +22,79 @@
   input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%; background: #23456e; border: 2px solid #fffdf8; box-shadow: 0 1px 3px rgba(0,0,0,.35); cursor: grab; }
   input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   ::selection { background: #23456e; color: #fff; }
+
+  /* ── 響應式版面 ──────────────────────────────────────────────
+     版面預設為三欄（左：參數／中：檢視／右：料表）。
+     隨著寬度縮減先收窄側欄，1023px 以下改為單欄堆疊，
+     並把 3D／工程圖檢視區移到最上方並固定，方便一邊捲動參數一邊看結果。 */
+  img, canvas, svg { max-width: 100%; }
+
+  /* 小筆電：側欄收窄，中間檢視區保留最大空間 */
+  @media (max-width: 1279px) {
+    .layout { grid-template-columns: 274px minmax(0,1fr) 302px !important; }
+  }
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 248px minmax(0,1fr) 270px !important; }
+  }
+
+  /* 草圖區：畫布與即時 3D 預覽改為上下排列 */
+  @media (max-width: 1100px) {
+    .sketch-row { flex-wrap: wrap !important; }
+    .sketch-preview { width: 100% !important; min-width: 0 !important; aspect-ratio: 16 / 9; }
+  }
+
+  /* 平板直向以下：單欄堆疊，檢視區置頂並固定 */
+  @media (max-width: 1023px) {
+    .layout { display: flex !important; flex-direction: column !important; }
+    .viewer {
+      order: -1;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      height: 52vh;
+      min-height: 300px;
+      border-bottom: 1px solid #d8d2c6;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    }
+    .panel { max-height: none !important; overflow-y: visible !important; }
+    .panel-left { border-right: none !important; border-bottom: 1px solid #d8d2c6; }
+    .panel-right { border-left: none !important; }
+  }
+
+  /* 手機橫幅：標題列改為可換行 */
+  @media (max-width: 860px) {
+    .topbar { flex-wrap: wrap !important; gap: 8px 14px !important; padding: 10px 14px !important; }
+    .topbar h1 { font-size: 16px !important; }
+    .topbar-meta { gap: 12px !important; flex-wrap: wrap; }
+  }
+
+  /* 手機直向 */
+  @media (max-width: 480px) {
+    .topbar h1 { font-size: 14.5px !important; }
+    .topbar-meta { font-size: 10px !important; gap: 10px !important; }
+    .viewer { height: 46vh; min-height: 260px; }
+  }
 </style>
 </helmet>
-<div style="min-height:100vh;min-width:1340px;background:#e9e5db;font-family:'Noto Sans TC',sans-serif;color:#17191c;display:flex;flex-direction:column">
+<div class="app" style="min-height:100vh;background:#e9e5db;font-family:'Noto Sans TC',sans-serif;color:#17191c;display:flex;flex-direction:column">
 
-  <header style="display:flex;align-items:center;gap:24px;padding:14px 22px;background:#17191c;color:#f4f1ea;border-bottom:3px solid #b8641c">
+  <header class="topbar" style="display:flex;align-items:center;gap:24px;padding:14px 22px;background:#17191c;color:#f4f1ea;border-bottom:3px solid #b8641c">
     <div style="display:flex;align-items:baseline;gap:10px">
       <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em;color:#b8641c">TABLE ATELIER</span>
       <h1 style="margin:0;font-size:19px;font-weight:500;letter-spacing:.06em">桌子 3D／2D 設計圖生成器</h1>
     </div>
     <div style="flex:1"></div>
-    <div style="display:flex;gap:22px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a9a49a">
+    <div class="topbar-meta" style="display:flex;gap:22px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a9a49a">
       <span>UNIT&nbsp;<span style="color:#f4f1ea">mm</span></span>
       <span>SPEC&nbsp;<span style="color:#f4f1ea">{{ code }}</span></span>
       <span>REV&nbsp;<span style="color:#f4f1ea">A.02</span></span>
     </div>
   </header>
 
-  <div style="display:grid;grid-template-columns:326px minmax(0,1fr) 350px;gap:0;flex:1;min-height:0">
+  <div class="layout" style="display:grid;grid-template-columns:326px minmax(0,1fr) 350px;gap:0;flex:1;min-height:0">
 
     <!-- ── 左：參數 ── -->
-    <aside style="background:#fffdf8;border-right:1px solid #d8d2c6;overflow-y:auto;max-height:calc(100vh - 60px)">
+    <aside class="panel panel-left" style="background:#fffdf8;border-right:1px solid #d8d2c6;overflow-y:auto;max-height:calc(100vh - 60px)">
 
       <div style="padding:16px 18px 14px;border-bottom:1px solid #e6e0d4;background:#f8f5ee">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -176,7 +228,7 @@
     </aside>
 
     <!-- ── 中：檢視 ── -->
-    <main style="display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#e9e5db">
+    <main class="viewer" style="display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#e9e5db">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 4px;padding:10px 16px;border-bottom:1px solid #d8d2c6;background:#efece3">
         <sc-for list="{{ viewTabs }}" as="v" hint-placeholder-count="4">
           <button onClick="{{ setView }}" data-k="{{ v.id }}" style="cursor:pointer;padding:7px 15px;border-radius:3px;border:1px solid {{ v.bd }};background:{{ v.bg }};color:{{ v.fg }};font-family:'Noto Sans TC',sans-serif;font-size:12.5px;letter-spacing:.03em;white-space:nowrap;flex-shrink:0">{{ v.name }}</button>
@@ -236,11 +288,11 @@
             </sc-for>
           </div>
 
-          <div style="display:flex;gap:12px;align-items:stretch">
-            <div style="flex:1 1 0;min-width:0">
+          <div class="sketch-row" style="display:flex;gap:12px;align-items:stretch">
+            <div class="sketch-canvas-wrap" style="flex:1 1 0;min-width:0">
               <canvas ref="{{ canvasRef }}" onPointerDown="{{ onDrawDown }}" onPointerMove="{{ onDrawMove }}" onPointerUp="{{ onDrawUp }}" onPointerLeave="{{ onDrawUp }}" style="width:100%;aspect-ratio:1400 / 900;display:block;border:1px solid #17191c;border-radius:2px;background:#fffdf8;box-shadow:0 2px 14px rgba(0,0,0,.09);touch-action:none;cursor:crosshair"></canvas>
             </div>
-            <div style="display:{{ previewPane }};width:420px;min-width:420px;position:relative;border:1px solid #17191c;border-radius:2px;background:radial-gradient(120% 100% at 50% 0%, #f6f3ec 0%, #ddd8cc 100%);overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.09)">
+            <div class="sketch-preview" style="display:{{ previewPane }};width:420px;min-width:420px;position:relative;border:1px solid #17191c;border-radius:2px;background:radial-gradient(120% 100% at 50% 0%, #f6f3ec 0%, #ddd8cc 100%);overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.09)">
               <div style="position:absolute;inset:0">
                 <x-import component-from-global-scope="table-3d" from="./table-3d.js" spec="{{ previewSpecJson }}" hint-size="100%,100%"></x-import>
               </div>
@@ -316,7 +368,7 @@
     </main>
 
     <!-- ── 右：料表／報價／匯出 ── -->
-    <aside style="background:#fffdf8;border-left:1px solid #d8d2c6;overflow-y:auto;max-height:calc(100vh - 60px)">
+    <aside class="panel panel-right" style="background:#fffdf8;border-left:1px solid #d8d2c6;overflow-y:auto;max-height:calc(100vh - 60px)">
       <div style="padding:16px 18px 14px;border-bottom:1px solid #e6e0d4">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:#8d877c;margin-bottom:10px">BOM · 板材料表</div>
         <div style="display:grid;grid-template-columns:1fr auto 26px;gap:0 10px;font-size:11px;align-items:baseline">
