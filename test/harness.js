@@ -14,7 +14,15 @@ function build() {
     console,
     setTimeout,
     clearTimeout,
-    localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    localStorage: (() => {
+      const m = new Map();
+      return {
+        getItem: (k) => (m.has(k) ? m.get(k) : null),
+        setItem: (k, v) => m.set(k, String(v)),
+        removeItem: (k) => m.delete(k),
+        clear: () => m.clear(),
+      };
+    })(),
     document: { addEventListener() {}, querySelector: () => null, createElement: () => ({ style: {}, getContext: () => null }) },
     DCLogic: class { setState() {} },
   };
@@ -24,12 +32,12 @@ function build() {
 
   // table-geom.js 會把 TableGeom 掛到 window 上
   vm.runInContext(fs.readFileSync(path.join(ROOT, 'table-geom.js'), 'utf8'), sandbox, { filename: 'table-geom.js' });
-  vm.runInContext(m[1] + '\n;globalThis.__api = { Component, MATS, LEGS, PRESETS, DIMS, SHEET_L, SHEET_W };', sandbox, { filename: 'index.html' });
+  vm.runInContext(m[1] + '\n;globalThis.__api = { Component, MATS, LEGS, PRESETS, DIMS, SHEET_L, SHEET_W, TPL_MAX, TPL_STORE, PARAM_KEYS, PARAM_SCHEMA, AI_PARAM_GUIDE, SHEET_VIEWS, ZOOM_MIN, ZOOM_MAX, SHEET_BASE, fitPct };', sandbox, { filename: 'index.html' });
 
   const api = sandbox.__api;
   const app = new api.Component();
   app.setState = function (u) { this.state = { ...this.state, ...(typeof u === 'function' ? u(this.state) : u) }; };
-  return { app, ...api, TableGeom: sandbox.TableGeom };
+  return { app, ...api, TableGeom: sandbox.TableGeom, localStorage: sandbox.localStorage };
 }
 
 module.exports = { build };
