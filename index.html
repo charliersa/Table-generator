@@ -137,12 +137,40 @@
       <div style="padding:16px 18px 14px;border-bottom:1px solid #e6e0d4">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:#8d877c;margin-bottom:10px">01 · 範本庫 PRESETS</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <sc-for list="{{ presets }}" as="ps" hint-placeholder-count="8">
+          <sc-for list="{{ presets }}" as="ps" hint-placeholder-count="12">
             <button onClick="{{ setPreset }}" data-k="{{ ps.id }}" style="text-align:left;cursor:pointer;padding:7px 8px;border-radius:3px;border:1px solid {{ ps.bd }};background:{{ ps.bg }};color:{{ ps.fg }};font-family:'Noto Sans TC',sans-serif;font-size:12px;line-height:1.25" style-hover="border-color:#23456e">
               <span style="display:block;font-weight:500">{{ ps.name }}</span>
               <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;opacity:.62;margin-top:2px">{{ ps.dim }}</span>
             </button>
           </sc-for>
+        </div>
+
+        <div style="margin-top:13px;padding-top:11px;border-top:1px dashed #ded7ca">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:7px">
+            <span style="font-size:11.5px;color:#3d4045">我的範本</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8d877c">{{ tplCount }}</span>
+          </div>
+          <div style="display:flex;gap:5px">
+            <input type="text" value="{{ tplName }}" onInput="{{ onTplName }}" placeholder="範本名稱（留空自動命名）" style="flex:1;min-width:0;padding:5px 7px;border:1px solid #d8d2c6;border-radius:3px;background:#f8f5ee;font-family:'Noto Sans TC',sans-serif;font-size:11.5px;color:#17191c" />
+            <button onClick="{{ saveTpl }}" style="flex-shrink:0;cursor:pointer;padding:5px 10px;border-radius:3px;border:1px solid #17191c;background:#17191c;color:#f4f1ea;font-family:'Noto Sans TC',sans-serif;font-size:11.5px;white-space:nowrap">存為範本</button>
+          </div>
+          <div style="display:{{ tplEmptyShow }};font-size:10.5px;color:#8d877c;line-height:1.6;margin-top:7px">目前的尺寸、外形、桌腳與手繪草圖會一起存起來，存在這台電腦的瀏覽器裡。</div>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:7px">
+            <sc-for list="{{ userTpls }}" as="t" hint-placeholder-count="0">
+              <div style="display:flex;gap:4px">
+                <button onClick="{{ loadTpl }}" data-k="{{ t.id }}" style="flex:1;min-width:0;text-align:left;cursor:pointer;padding:6px 8px;border-radius:3px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-family:'Noto Sans TC',sans-serif;font-size:11.5px;line-height:1.25" style-hover="border-color:#23456e">
+                  <span style="display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.name }}</span>
+                  <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;opacity:.62;margin-top:2px">{{ t.dim }}</span>
+                </button>
+                <button onClick="{{ delTpl }}" data-k="{{ t.id }}" title="刪除" style="flex-shrink:0;width:26px;cursor:pointer;border-radius:3px;border:1px solid #e0dad0;background:#fffdf8;color:#8d877c;font-family:'IBM Plex Mono',monospace;font-size:13px" style-hover="border-color:#b8641c;color:#b8641c">×</button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px">
+            <button onClick="{{ exportTpls }}" style="cursor:pointer;padding:5px 6px;border-radius:3px;border:1px solid #e0dad0;background:#f8f5ee;color:#3d4045;font-family:'Noto Sans TC',sans-serif;font-size:11px" style-hover="border-color:#23456e">匯出 JSON</button>
+            <button onClick="{{ importTpls }}" style="cursor:pointer;padding:5px 6px;border-radius:3px;border:1px solid #e0dad0;background:#f8f5ee;color:#3d4045;font-family:'Noto Sans TC',sans-serif;font-size:11px" style-hover="border-color:#23456e">匯入 JSON</button>
+          </div>
+          <div style="display:{{ tplMsgShow }};font-size:10.5px;color:#23456e;line-height:1.6;margin-top:7px">{{ tplMsg }}</div>
         </div>
       </div>
 
@@ -246,6 +274,7 @@
           <button onClick="{{ zoomIn }}" style="cursor:pointer;width:30px;height:30px;border:none;border-left:1px solid #e6e0d4;background:transparent;color:#3d4045;font-size:15px;line-height:1">+</button>
           <button onClick="{{ zoomFit }}" style="cursor:pointer;height:30px;padding:0 10px;border:none;border-left:1px solid #e6e0d4;background:transparent;color:#3d4045;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em">FIT</button>
         </div>
+        <span style="display:{{ zoomBar }};align-items:center;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8d877c;letter-spacing:.04em">滾輪縮放</span>
         <div style="display:flex;gap:6px">
           <button onClick="{{ toggleSpin }}" style="cursor:pointer;padding:7px 12px;border-radius:3px;border:1px solid #d8d2c6;background:#fffdf8;color:#3d4045;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em">{{ spinLabel }}</button>
           <button onClick="{{ resetCam }}" style="cursor:pointer;padding:7px 12px;border-radius:3px;border:1px solid #d8d2c6;background:#fffdf8;color:#3d4045;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em">RESET VIEW</button>
@@ -464,7 +493,17 @@ const PRESETS = {
   standing:{ name: '電腦升降桌', length: 1600, width: 800, height: 720, topT: 25, legSize: 60, legInset: 100, cornerRadius: 20, apronH: 80, legStyle: 'metalX', material: 'black', apron: false, stretcher: false, edgeBand: true, drawers: 0, topShape: 'rect', returnD: 0 },
   side:    { name: '邊桌／床頭桌', length: 450, width: 450, height: 550, topT: 20, legSize: 40, legInset: 30, cornerRadius: 6, apronH: 120, legStyle: 'taper', material: 'beech', apron: true, stretcher: false, edgeBand: false, drawers: 1, topShape: 'rect', returnD: 0 },
   custom:  { name: '訂製任意尺寸', length: 2000, width: 1000, height: 760, topT: 40, legSize: 90, legInset: 90, cornerRadius: 40, apronH: 110, legStyle: 'square', material: 'oak', apron: true, stretcher: true, edgeBand: false, drawers: 3, topShape: 'rect', returnD: 0 },
+  roundT:  { name: '圓餐桌', length: 1200, width: 1200, height: 750, topT: 30, legSize: 90, legInset: 0, cornerRadius: 0, apronH: 100, legStyle: 'pedestal', material: 'oak', apron: false, stretcher: false, edgeBand: false, drawers: 0, topShape: 'ellipse', returnD: 0 },
+  ovalMeet: { name: '橢圓會議桌', length: 2400, width: 1200, height: 750, topT: 36, legSize: 100, legInset: 0, cornerRadius: 0, apronH: 120, legStyle: 'pedestal', material: 'walnut', apron: false, stretcher: false, edgeBand: true, drawers: 0, topShape: 'ellipse', returnD: 0 },
+  lDesk:   { name: 'L 型書桌', length: 1600, width: 700, height: 740, topT: 25, legSize: 60, legInset: 50, cornerRadius: 6, apronH: 120, legStyle: 'square', material: 'ash', apron: true, stretcher: false, edgeBand: true, drawers: 1, topShape: 'lshape', returnD: 1400 },
+  runway:  { name: '跑道形長桌', length: 2200, width: 900, height: 750, topT: 36, legSize: 90, legInset: 80, cornerRadius: 0, apronH: 110, legStyle: 'trestle', material: 'oak', apron: false, stretcher: false, edgeBand: false, drawers: 0, topShape: 'stadium', returnD: 0 },
 };
+
+/* 自訂範本：存在瀏覽器 localStorage，可匯出／匯入 JSON */
+const TPL_STORE = 'ta.templates';
+const TPL_MAX = 40;
+const TPL_FIELDS = ['length', 'width', 'height', 'topT', 'legSize', 'legInset', 'cornerRadius', 'apronH',
+  'legStyle', 'material', 'apron', 'stretcher', 'edgeBand', 'drawers', 'topShape', 'returnD', 'outline'];
 
 const DIMS = [
   { k: 'length', label: '桌長 L', min: 400, max: 3000, step: 10 },
@@ -478,6 +517,14 @@ const DIMS = [
 ];
 
 const SHEET_L = 2440, SHEET_W = 1220;
+
+/* 2D 圖紙分頁：版面 1400px 寬、svg viewBox 1600×1080，縮放以百分比計 */
+const SHEET_VIEWS = ['draw', 'explode', 'cut'];
+const SHEET_BASE = 1400, SHEET_VB_W = 1600, SHEET_VB_H = 1080, SHEET_PAD = 36;
+const ZOOM_MIN = 20, ZOOM_MAX = 400;
+/* 可視區 w×h（已扣掉留白）內，整張圖紙剛好放得下的縮放百分比 */
+const fitPct = (w, h) => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX,
+  Math.round(Math.min(w, h * SHEET_VB_W / SHEET_VB_H) / SHEET_BASE * 100)));
 const fmt = (n) => Math.round(n).toLocaleString('en-US');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
@@ -554,9 +601,39 @@ const store = {
   set(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} },
 };
 
+/* ── 自訂範本：讀寫 localStorage、草圖筆畫壓縮 ── */
+const SHAPE_IDS = ['rect', 'ellipse', 'stadium', 'lshape', 'freeform'];
+const SHAPE_NAME = { rect: '矩形', ellipse: '圓／橢圓', stadium: '跑道形', lshape: 'L 型', freeform: '手繪外形' };
+const packStrokes = (ss) => (ss || []).slice(0, 400)
+  .map((s) => ({ w: s.w || 4, p: (s.pts || []).map((q) => [Math.round(q.x), Math.round(q.y)]) }))
+  .filter((s) => s.p.length > 1);
+const unpackStrokes = (ss) => (Array.isArray(ss) ? ss : [])
+  .map((s) => ({ w: Number(s.w) || 4, pts: (Array.isArray(s.p) ? s.p : []).filter((q) => Array.isArray(q) && isFinite(q[0]) && isFinite(q[1])).map(([x, y]) => ({ x, y })) }))
+  .filter((s) => s.pts.length > 1);
+/* 只留已知欄位，避免匯入檔塞進奇怪的鍵值 */
+const tplParams = (p) => Object.fromEntries(TPL_FIELDS.filter((k) => p[k] !== undefined).map((k) => [k, p[k]]));
+const validTpl = (t) => !!t && typeof t === 'object' && typeof t.name === 'string' && t.name.trim() !== ''
+  && !!t.p && typeof t.p === 'object' && isFinite(t.p.length) && isFinite(t.p.width) && isFinite(t.p.height);
+const normTpl = (t, i) => ({
+  id: typeof t.id === 'string' && t.id ? t.id : `t${Date.now()}_${i}`,
+  name: String(t.name).trim().slice(0, 24),
+  at: isFinite(t.at) ? t.at : Date.now(),
+  p: tplParams(t.p),
+  strokes: packStrokes(unpackStrokes(t.strokes)),
+  sketchView: ['front', 'side', 'top'].indexOf(t.sketchView) >= 0 ? t.sketchView : 'front',
+  targetLen: isFinite(t.targetLen) ? Math.max(400, Math.min(3000, Math.round(t.targetLen))) : 1800,
+});
+const readTpls = (raw) => {
+  const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.templates) ? raw.templates : []);
+  const seen = new Set();
+  return list.filter(validTpl).map(normTpl).filter((t) => (seen.has(t.id) ? false : seen.add(t.id))).slice(0, TPL_MAX);
+};
+const loadTpls = () => { try { return readTpls(JSON.parse(store.get(TPL_STORE) || '[]')); } catch (e) { return []; } };
+const saveTpls = (list) => { try { localStorage.setItem(TPL_STORE, JSON.stringify(list)); return ''; } catch (e) { return '瀏覽器儲存空間不足，請先刪除幾個範本。'; } };
+
 const BOOL_KEYS = ['apron', 'stretcher', 'edgeBand'];
-const PARAM_KEYS = [...DIMS.map((d) => d.k), 'legStyle', 'material', ...BOOL_KEYS, 'drawers'];
-const KEY_LABEL = { ...Object.fromEntries(DIMS.map((d) => [d.k, d.label])), legStyle: '桌腳', material: '材質', apron: '橫撐', stretcher: '加強樑', edgeBand: '封邊', drawers: '抽屜' };
+const PARAM_KEYS = [...DIMS.map((d) => d.k), 'legStyle', 'material', ...BOOL_KEYS, 'drawers', 'topShape', 'returnD'];
+const KEY_LABEL = { ...Object.fromEntries(DIMS.map((d) => [d.k, d.label])), legStyle: '桌腳', material: '材質', apron: '橫撐', stretcher: '加強樑', edgeBand: '封邊', drawers: '抽屜', topShape: '桌板外形', returnD: 'L 型總深 D' };
 
 const PARAM_PROPS = {
   ...Object.fromEntries(DIMS.map((d) => [d.k, { type: 'integer', description: `${d.label}，${d.min}–${d.max} mm` }])),
@@ -566,6 +643,8 @@ const PARAM_PROPS = {
   stretcher: { type: 'boolean' },
   edgeBand: { type: 'boolean' },
   drawers: { type: 'integer', description: '抽屜數 0–3' },
+  topShape: { type: 'string', enum: SHAPE_IDS },
+  returnD: { type: 'integer', description: 'L 型的總深 D（含回台），300–1400；其他外形填 0' },
 };
 const objSchema = (props) => ({ type: 'object', additionalProperties: false, required: Object.keys(props), properties: props });
 const PARAM_SCHEMA = objSchema(PARAM_PROPS);
@@ -588,13 +667,17 @@ const AI_PARAM_GUIDE = `參數說明（單位 mm）：
 - topT 桌板厚 15–80；legSize 桌腳斷面邊長 30–140；legInset 桌腳外緣距桌板邊緣 0–300
 - cornerRadius 桌板四角圓角 0–200；apronH 桌板下方橫撐（裙板）高度 60–200
 - legStyle：${Object.keys(LEGS).map((k) => `${k}=${LEGS[k].name}`).join('、')}（metalX、sled、trestle、aframe、pedestal 為桌架／柱腳，apron、stretcher 無作用；pedestal 桌長 1500 以上且長寬比 ≥ 1.4 自動改雙柱；L 型桌只能用 square、round、taper）
+- topShape 桌板外形：${SHAPE_IDS.map((k) => `${k}=${SHAPE_NAME[k]}`).join('、')}
+- returnD：只有 topShape=lshape 時有作用，代表 L 型連同回台的總深度 300–1400（實際會取 returnD 與「檯面寬＋300」的較大值，檯面寬 = min(width, length×0.6)）；其他外形一律填 0
 - material：${Object.keys(MATS).map((k) => `${k}=${MATS[k].name}`).join('、')}
 - apron 四周橫撐；stretcher 靠近地面的加強樑；edgeBand ABS 封邊（多用於美耐板）；drawers 抽屜 0–3（裝在正面橫撐內，需 apron=true 且 apronH ≥ 100）
 設計準則：
 - 餐桌高 720–760，每人約佔桌長 600；書桌高 720–750、深 600–800；咖啡桌高 380–450；吧台桌 1000–1100；邊桌 500–650
 - 實木桌板無支撐跨距超過 1200 時，板厚宜 ≥ 30 或加橫撐／加強樑；美耐板（塑合板）跨距更短
 - 坐姿桌膝下淨空（桌高 − 板厚 − 橫撐高）應 ≥ 600
-- legInset + legSize 不宜超過桌寬的 1/4；錐形腳斷面宜 ≥ 50，否則強度不足`;
+- legInset + legSize 不宜超過桌寬的 1/4；錐形腳斷面宜 ≥ 50，否則強度不足
+- 外形選用：圓／橢圓適合 4–8 人餐敘與會議、動線較順；跑道形適合狹長的長桌；L 型適合轉角工作站（一定要給 returnD）；freeform 只有使用者手繪過輪廓時才可選，否則請用 rect
+- 非矩形桌板要多算裁切損耗與曲線修邊工資，圓／橢圓的展開面積約只有外框的 79%，但仍以外框毛胚下料`;
 
 const cutText = (arr, n, len) => (arr || [])
   .map((t) => String(t).replace(/^\s*\d+\s*[.、)）]\s*/, '').trim())
@@ -602,13 +685,48 @@ const cutText = (arr, n, len) => (arr || [])
   .map((t) => (t.length > len ? t.slice(0, len - 1) + '…' : t));
 
 class Component extends DCLogic {
-  state = { p: { ...PRESETS.dining }, preset: 'dining', view: '3d', spin: false, zoom: 100, ready3d: false, tool: 'select', annos: {}, sel: null, sketchTool: 'pen', sketchGuide: true, sketchView: 'front', targetLen: 1800, penW: 4, sketchMsg: '在方格紙上畫出桌子的正面輪廓：桌板一條粗橫帶，桌腳兩條直線；畫斜線代表金屬 X 腳。', note: '所有圖檔皆依目前參數即時產生.',
+  state = { p: { ...PRESETS.dining }, preset: 'dining', view: '3d', spin: false, zoom: 100, zoomAuto: true, ready3d: false, tool: 'select', annos: {}, sel: null, sketchTool: 'pen', sketchGuide: true, sketchView: 'front', targetLen: 1800, penW: 4, sketchMsg: '在方格紙上畫出桌子的正面輪廓：桌板一條粗橫帶，桌腳兩條直線；畫斜線代表金屬 X 腳。', note: '所有圖檔皆依目前參數即時產生.',
     aiKey: store.get(KEY_STORE), aiModel: store.get(MODEL_STORE) || AI_DEFAULT_MODEL, aiImageModel: store.get(IMAGE_MODEL_STORE) || AI_IMAGE_DEFAULT_MODEL,
-    renderScene: 'nordic', renderSource: 'model', renderQuality: 'medium', renderMsg: '依目前的桌子參數生成擺在實際空間裡的概念效果圖（OpenAI 圖片模型，會產生 API 費用）。', renders: [], aiSettings: !store.get(KEY_STORE), aiPrompt: '', aiBusy: '', aiMsg: '', aiIssues: [], aiDoc: null, previewEnabled: true, previewSpec: null };
+    renderScene: 'nordic', renderSource: 'model', renderQuality: 'medium', renderMsg: '依目前的桌子參數生成擺在實際空間裡的概念效果圖（OpenAI 圖片模型，會產生 API 費用）。', renders: [], aiSettings: !store.get(KEY_STORE), aiPrompt: '', aiBusy: '', aiMsg: '', aiIssues: [], aiDoc: null, previewEnabled: true, previewSpec: null,
+    userTpls: loadTpls(), tplName: '', tplMsg: '' };
 
   componentDidMount() {
     document.addEventListener('ready', () => this.setState({ ready3d: true }), true);
     document.addEventListener('failed', () => this.setState({ ready3d: false }), true);
+    // 開啟時先把圖紙縮到剛好放得下；視窗大小改變後，只要使用者沒自己縮放過就跟著重算
+    setTimeout(() => this.fitZoom(), 0);
+    window.addEventListener('resize', () => { if (this.state.zoomAuto) this.fitZoom(); });
+    // 滾輪縮放圖紙：用原生監聽才能 preventDefault（3D 與手繪分頁不攔截，交給原本的行為）
+    window.addEventListener('wheel', (e) => this.onSheetWheel(e), { passive: false, capture: true });
+  }
+
+  /* ── 2D 圖紙縮放 ── */
+  sheetBox() { return document.querySelector('[data-sheet-scroll]'); }
+
+  fitZoom() {
+    const box = this.sheetBox();
+    if (!box || !box.clientWidth) return;
+    this.setState({ zoom: fitPct(box.clientWidth - SHEET_PAD, box.clientHeight - SHEET_PAD), zoomAuto: true });
+  }
+
+  setZoom(next) {
+    const z = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(next)));
+    this.setState({ zoom: z, zoomAuto: false });
+    return z;
+  }
+
+  onSheetWheel(e) {
+    if (SHEET_VIEWS.indexOf(this.state.view) < 0) return;
+    const box = e.target && e.target.closest ? e.target.closest('[data-sheet-scroll]') : null;
+    if (!box) return;
+    e.preventDefault();
+    const old = this.state.zoom;
+    const z = this.setZoom(old * (e.deltaY < 0 ? 1.15 : 1 / 1.15));
+    if (z === old) return;
+    // 以游標所在的位置為中心縮放，捲動位置跟著調整
+    const r = box.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    const cx = box.scrollLeft + px, cy = box.scrollTop + py, k = z / old;
+    requestAnimationFrame(() => { box.scrollLeft = cx * k - px; box.scrollTop = cy * k - py; });
   }
 
   /* ── 手繪草圖 ── */
@@ -690,6 +808,39 @@ class Component extends DCLogic {
     const diagLen = segs.filter((g) => { const a = Math.abs((g.y2 - g.y1) / ((g.x2 - g.x1) || 0.001)); return a > 0.45 && a < 2.6 && len(g) > 10; }).reduce((t, g) => t + len(g), 0);
     const totalLen = segs.reduce((t, g) => t + len(g), 0) || 1;
 
+    /*
+     * 把筆畫切成方向一致的直線段：逐點的小段太短，量不出「橫桿有多長」，
+     * 要先合併成一條線才能判斷裙板、上框、腳座這些長度特徵。
+     */
+    const runs = [];
+    const tol = Math.max(3, Math.min(bw, bh) * 0.035);
+    const rdp = (q, depth) => { // Ramer–Douglas–Peucker：偏離最大的點就是轉角，從那裡切開
+      const A = q[0], B = q[q.length - 1];
+      const vx = B.x - A.x, vy = B.y - A.y, L = Math.hypot(vx, vy);
+      let dmax = 0, idx = 0;
+      for (let i = 1; i < q.length - 1; i++) {
+        const P = q[i];
+        const d = L > 1 ? Math.abs(vx * (P.y - A.y) - vy * (P.x - A.x)) / L : Math.hypot(P.x - A.x, P.y - A.y);
+        if (d > dmax) { dmax = d; idx = i; }
+      }
+      if (dmax > tol && idx > 0 && depth < 24) { rdp(q.slice(0, idx + 1), depth + 1); rdp(q.slice(idx), depth + 1); }
+      else runs.push({ x1: A.x, y1: A.y, x2: B.x, y2: B.y });
+    };
+    strokes.forEach((s) => { if (s.pts.length >= 2) rdp(s.pts, 0); });
+    const hRuns = runs.filter((g) => Math.abs(g.y2 - g.y1) <= 0.3 * Math.abs(g.x2 - g.x1) && len(g) > bw * 0.05);
+    const dRuns = runs.filter((g) => { const a = Math.abs((g.y2 - g.y1) / ((g.x2 - g.x1) || 0.001)); return a > 0.45 && a < 2.6 && len(g) > Math.min(bw, bh) * 0.2; });
+    /* 同一個高度的水平線併成一條「橫桿」，手抖被切成好幾段也量得出實際跨幅 */
+    const bars = [];
+    hRuns.slice().sort((a, b) => (a.y1 + a.y2) - (b.y1 + b.y2)).forEach((g) => {
+      const y = (g.y1 + g.y2) / 2, last = bars[bars.length - 1];
+      if (last && y - last.ys[last.ys.length - 1] <= Math.max(8, bh * 0.035)) {
+        last.ys.push(y);
+        last.x0 = Math.min(last.x0, g.x1, g.x2);
+        last.x1 = Math.max(last.x1, g.x1, g.x2);
+      } else bars.push({ ys: [y], x0: Math.min(g.x1, g.x2), x1: Math.max(g.x1, g.x2) });
+    });
+    bars.forEach((b) => { b.y = b.ys.reduce((t, v) => t + v, 0) / b.ys.length; b.w = b.x1 - b.x0; });
+
     const cluster = (vals, tol) => {
       const sorted = vals.slice().sort((a, b) => a - b), out = [];
       sorted.forEach((v) => {
@@ -707,7 +858,41 @@ class Component extends DCLogic {
 
     const bodyV = vert.filter((g) => (g.y1 + g.y2) / 2 > minY + topPx + 6);
     const xc = cluster(bodyV.map((g) => (g.x1 + g.x2) / 2), bw * 0.06).filter((c) => c.n >= 2);
-    const isX = diagLen / totalLen > 0.28;
+
+    /*
+     * 桌腳型式：先看斜線（X 腳／A 字腳），再看直桿與橫桿的位置（柱腳／ㄇ字腳／工作台腳），
+     * 都不像才回到四角腳（直線＝方腳，上寬下窄＝錐形腳）。
+     */
+    const cxm = minX + bw / 2;
+    const ends = (g) => (g.y1 < g.y2 ? [g.x1, g.x2] : [g.x2, g.x1]); // [上端 x, 下端 x]
+    const dLen = (list) => list.reduce((t, g) => t + len(g), 0);
+    // 跨過中線的斜線＝交叉的 X；下端比上端更外側的斜線＝往外張的 A
+    const crossD = dRuns.filter((g) => { const [xt, xb] = ends(g); return (xt - cxm) * (xb - cxm) < -1; });
+    const splayD = dRuns.filter((g) => { const [xt, xb] = ends(g); return Math.abs(xb - cxm) > Math.abs(xt - cxm) + bw * 0.015; });
+    // 兩條以上「超過半個高度」的長斜線，就算整體斜線比例不高也算斜撐（A 字腳只有兩條斜線）
+    const isDiag = diagLen / totalLen > 0.28 || dRuns.filter((g) => len(g) > Math.min(bw, bh) * 0.45).length >= 2;
+    const isA = isDiag && dLen(splayD) > dLen(crossD) * 1.5;
+    const isX = isDiag && !isA;
+    // 橫桿：緊貼桌板下方的上框、中段拉桿、貼地的腳座
+    const wide = (b, f) => b.w > bw * f;
+    // 上框：桌板下方一條幾乎與桌板同寬的橫桿（四角腳的裙板會被兩支桌腳切短，寬度達不到）
+    // 由上往下第二條橫桿就是桌板底線，上框要落在它下方一個容差之外
+    const boardBot = bars.length >= 2 ? Math.max(bars[1].y, minY + topPx * 0.8) : minY + topPx;
+    const topBar = bars.some((b) => b.y > boardBot + Math.max(tol, topPx * 0.4) && b.y < minY + bh * 0.32 && wide(b, 0.85));
+    const floorBar = bars.filter((b) => b.y > minY + bh * 0.9 && wide(b, 0.25));
+    const centerV = bodyV.filter((g) => Math.abs((g.x1 + g.x2) / 2 - cxm) < bw * 0.2);
+    const edgeV = bodyV.filter((g) => Math.abs((g.x1 + g.x2) / 2 - cxm) > bw * 0.3);
+    // 立柱落到地面、且貼著外框兩側
+    const edgeLowV = bodyV.filter((g) => Math.max(g.y1, g.y2) > minY + bh * 0.86 && Math.abs((g.x1 + g.x2) / 2 - cxm) > bw * 0.38);
+    // 柱腳：直桿都集中在中間，底下有一片底座
+    const isPedestal = !isDiag && centerV.length >= 2 && edgeV.length <= Math.max(1, centerV.length * 0.3) && floorBar.length > 0;
+    // 工作台腳：兩端立柱＋貼地腳座＋上橫木；ㄇ字腳：兩端立柱＋上框，中段與地面都沒有橫桿
+    const twoPosts = !isDiag && !isPedestal && xc.length >= 2 && edgeLowV.length >= 2 && topBar;
+    const isTrestle = twoPosts && floorBar.length > 0;
+    const isSled = twoPosts && floorBar.length === 0
+      && !bars.some((b) => b.y > minY + bh * 0.4 && b.y < minY + bh * 0.9 && wide(b, 0.25));
+    const isFrame = isX || isA || isPedestal || isTrestle || isSled;
+
     const spread = xc.length ? xc.reduce((t, c) => t + (c.max - c.min), 0) / xc.length : 0;
     const legSize = xc.length && spread > 6
       ? Math.round(Math.max(30, Math.min(140, spread * k)) / 5) * 5
@@ -723,17 +908,18 @@ class Component extends DCLogic {
         taper = spanL < spanU * 0.88;
       }
     }
-    const midHs = horiz.filter((g) => { const y = (g.y1 + g.y2) / 2; return y > minY + topPx + 10 && y < minY + bh * 0.55 && len(g) > bw * 0.25; });
-    const apron = !isX && midHs.length > 0;
-    const apronH = apron ? Math.round(Math.max(60, Math.min(200, (Math.max(...midHs.map((g) => (g.y1 + g.y2) / 2)) - (minY + topPx)) * k))) : (this.state.p.apronH || 90);
-    const stretcher = !isX && horiz.some((g) => (g.y1 + g.y2) / 2 > minY + bh * 0.68 && len(g) > bw * 0.3);
+    const midHs = bars.filter((b) => b.y > boardBot + Math.max(8, topPx * 0.4) && b.y < minY + bh * 0.55 && wide(b, 0.25));
+    const apron = !isFrame && midHs.length > 0;
+    const apronH = apron ? Math.round(Math.max(60, Math.min(200, (Math.max(...midHs.map((b) => b.y)) - (minY + topPx)) * k))) : (this.state.p.apronH || 90);
+    const stretcher = !isFrame && bars.some((b) => b.y > minY + bh * 0.68 && wide(b, 0.3));
 
     const front = this.state.sketchView === 'front';
     const height = Math.round(Math.max(300, Math.min(1150, bh * k)) / 5) * 5;
+    const legStyle = isX ? 'metalX' : isA ? 'aframe' : isPedestal ? 'pedestal'
+      : isTrestle ? 'trestle' : isSled ? 'sled' : taper ? 'taper' : 'square';
     const next = {
       ...this.state.p,
-      height, topT, legSize, legInset: inset, apronH, apron, stretcher,
-      legStyle: isX ? 'metalX' : (taper ? 'taper' : 'square'),
+      height, topT, legSize, legInset: isFrame ? this.state.p.legInset : inset, apronH, apron, stretcher, legStyle,
     };
     if (front) { next.length = Math.round(target / 10) * 10; }
     else { next.width = Math.round(Math.min(1400, target) / 10) * 10; }
@@ -820,7 +1006,8 @@ class Component extends DCLogic {
     }
     const r = this.parseSketch();
     if (r.error) return this.setState({ sketchMsg: r.error });
-    this.setState({ p: r.next, preset: 'custom-edit', view: '3d', sketchMsg: r.msg, note: r.msg });
+    // 經 sanitize 收斂範圍，並讓 L 型桌自動換回四角腳
+    this.setState((s) => ({ p: this.sanitize(r.next, s.p), preset: 'custom-edit', view: '3d', sketchMsg: r.msg, note: r.msg }));
   }
 
   /* ── ChatGPT ── */
@@ -902,14 +1089,14 @@ ${this.specText(this.state.p)}
 
 客戶需求：${text}
 
-請輸出符合需求的完整參數。需求若是「修改」（例如加長、換材質），以目前參數為基礎調整；沒提到的項目依設計準則決定或沿用目前值。summary 用一兩句說明設計重點。`,
+請輸出符合需求的完整參數，包含桌板外形 topShape 與 L 型總深 returnD。需求若是「修改」（例如加長、換材質、改成圓的），以目前參數為基礎調整；沒提到的項目依設計準則決定或沿用目前值。summary 用一兩句說明設計重點（含外形選擇的理由）。`,
         'table_design', objSchema({ params: PARAM_SCHEMA, summary: { type: 'string' } }));
       const next = this.sanitize(r.params, this.state.p);
       this.setState((s) => ({
         p: next, preset: 'custom-edit', aiIssues: [],
         view: s.view === 'sketch' ? '3d' : s.view,
         aiMsg: `✓ ${r.summary}`,
-        note: `AI 已生成：${next.length}×${next.width}×${next.height}，${MATS[next.material].name}／${LEGS[next.legStyle].name}`,
+        note: `AI 已生成：${this.shapeName(next)} ${next.length}×${Math.round(this.geo(next).D)}×${next.height}，${MATS[next.material].name}／${LEGS[next.legStyle].name}`,
       }));
     });
   }
@@ -922,7 +1109,8 @@ ${this.specText(this.state.p)}
 ${this.specText(this.state.p)}
 
 從結構強度、人體工學、比例美感、加工可行性、成本五個面向找出問題，最多 6 項，依嚴重度排序；設計沒問題就回傳空陣列。
-每項 title 不超過 16 字、detail 不超過 60 字。changes 列出建議修改的參數，value 用字串（例如 "35"、"true"、"taper"）；只是提醒而不需改參數時 changes 為空陣列。verdict 用一句話總評。`,
+外形也要一併檢查：桌板外形與用途、人數、動線是否相稱，非矩形的裁切損耗是否划算，L 型的 returnD 與檯面寬是否合理。
+每項 title 不超過 16 字、detail 不超過 60 字。changes 列出建議修改的參數，value 用字串（例如 "35"、"true"、"taper"、"ellipse"）；只是提醒而不需改參數時 changes 為空陣列。除非使用者已手繪輪廓，topShape 不要建議改成 freeform。verdict 用一句話總評。`,
         'design_review', REVIEW_SCHEMA);
       const issues = (r.issues || []).slice(0, 6).map((x, i) => ({
         ...x, id: String(i), applied: false,
@@ -939,7 +1127,7 @@ ${this.specText(this.state.p)}
     it.changes.forEach(({ key, value }) => {
       const v = String(value).trim();
       if (BOOL_KEYS.indexOf(key) >= 0) patch[key] = /^(true|是|有|on)$/i.test(v);
-      else if (key === 'legStyle' || key === 'material') patch[key] = v;
+      else if (key === 'legStyle' || key === 'material' || key === 'topShape') patch[key] = v;
       else if (/\d/.test(v)) patch[key] = Number(v.replace(/[^\d.\-]/g, ''));
     });
     this.setState((s) => ({
@@ -1012,8 +1200,15 @@ ${this.specText(p)}
 
 請依像素量測換算並判讀：
 - topT 桌板厚度、legSize 桌腳斷面寬、legInset 桌腳外緣到桌板邊緣的距離
-- legStyle：兩條平行直線=square；上寬下窄=taper；單線或畫成圓柱=round；交叉斜線=metalX
-- apron 桌板正下方是否有橫向裙板，以及 apronH 高度；stretcher 靠近地面是否有橫向加強樑
+- legStyle 依輪廓特徵判斷（${front ? '正視圖' : '側視圖'}）：
+  · square 兩支平行直腳；taper 上寬下窄；round 單線或畫成圓柱（以上三種桌腳通常會與桌板邊緣留一段內縮）
+  · metalX 兩條交叉成 X 的斜線，交點在中央
+  · aframe A 字腳：兩條往下向外張開的斜線（Λ 形，不交叉），中間常有一條橫檔${front ? '；正視圖通常只看得到兩端各一支近乎垂直的腳' : ''}
+  · sled ㄇ字金屬腳：與桌板幾乎等寬的上框＋兩支落到地面的立柱，形成倒 ㄇ／倒 U，中段與地面都沒有橫桿
+  · trestle 工作台腳：上橫木＋兩支立柱＋貼地的腳座橫木，中段還有一條橫檔，整體像 H 或 I
+  · pedestal 中央柱腳：桌板正中央一支（長桌則兩支）粗柱，下方一片較寬的圓底座，兩側沒有腳
+  判斷重點：直腳落在桌板兩端且中間淨空＝四角腳；有貼地的橫向腳座＝trestle；上框與立柱連成封閉的 ㄇ＝sled；重量集中在中央＝pedestal
+- apron 桌板正下方是否有橫向裙板，以及 apronH 高度；stretcher 靠近地面是否有橫向加強樑（legStyle 為 metalX、sled、trestle、aframe、pedestal 時這兩項一律回傳 false）
 - drawers 橫撐上畫的抽屜數（${front ? '沒畫就是 0' : `側面看不到抽屜，請回傳 ${this.state.p.drawers}`}）
 手繪線條會抖動、不完全水平垂直，請推測繪者意圖。以下是規則式程式的初步判讀，僅供參考、可能有誤：${JSON.stringify(hint)}
 explanation 用一句話說明你在草圖中看到的結構。` },
@@ -1686,6 +1881,100 @@ ${inner}
     return this.frame(inner, '板材開料圖 CUTTING PLAN', `1 : ${Math.round(1 / s)}`, p);
   }
 
+  /* ── 自訂範本 ── */
+  presetName() {
+    const id = this.state.preset;
+    if (PRESETS[id]) return PRESETS[id].name;
+    const t = (this.state.userTpls || []).find((x) => x.id === id);
+    return t ? t.name : '桌具';
+  }
+
+  tplDim(t) {
+    const p = { ...PRESETS.dining, ...t.p };
+    const shape = window.TableGeom ? window.TableGeom.shapeOf(p) : 'rect';
+    const D = window.TableGeom ? Math.round(window.TableGeom.depthOf(p)) : p.width;
+    return `${SHAPE_NAME[shape] || '矩形'} ${p.length}×${D}${t.strokes && t.strokes.length ? '　含草圖' : ''}`;
+  }
+
+  putTpls(list, msg) {
+    const err = saveTpls(list);
+    this.setState({ userTpls: list, tplMsg: err || msg });
+    return !err;
+  }
+
+  saveTpl() {
+    const s = this.state;
+    if (s.userTpls.length >= TPL_MAX) return this.setState({ tplMsg: `自訂範本最多 ${TPL_MAX} 個，請先刪除幾個。` });
+    const auto = `${this.shapeName(s.p)} ${s.p.length}×${Math.round(this.geo(s.p).D)}`;
+    const t = normTpl({
+      id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
+      name: (s.tplName || '').trim() || auto, at: Date.now(),
+      p: s.p, strokes: packStrokes(this.strokes), sketchView: s.sketchView, targetLen: s.targetLen,
+    }, 0);
+    if (this.putTpls([t, ...s.userTpls], `已存為範本「${t.name}」${t.strokes.length ? '（含草圖）' : ''}。`)) {
+      this.setState({ tplName: '', preset: t.id });
+    }
+  }
+
+  loadTpl(id) {
+    const t = (this.state.userTpls || []).find((x) => x.id === id);
+    if (!t) return;
+    this.strokes = unpackStrokes(t.strokes);
+    if (this.cv) this.redraw();
+    const msg = `已載入自訂範本：${t.name}`;
+    this.setState({
+      p: this.sanitize(t.p, PRESETS.dining), preset: t.id,
+      sketchView: t.sketchView, targetLen: t.targetLen,
+      previewSpec: null, aiIssues: [], aiDoc: null, tplMsg: msg, note: msg,
+    });
+  }
+
+  delTpl(id) {
+    const t = (this.state.userTpls || []).find((x) => x.id === id);
+    this.putTpls(this.state.userTpls.filter((x) => x.id !== id), t ? `已刪除範本「${t.name}」。` : '');
+    if (this.state.preset === id) this.setState({ preset: 'custom-edit' });
+  }
+
+  exportTpls() {
+    const list = this.state.userTpls || [];
+    if (!list.length) return this.setState({ tplMsg: '還沒有自訂範本可以匯出。' });
+    this.dl(`TableAtelier_templates_${new Date().toISOString().slice(0, 10)}.json`,
+      JSON.stringify({ app: 'table-atelier', version: 1, at: Date.now(), templates: list }, null, 2),
+      'application/json;charset=utf-8');
+    this.setState({ tplMsg: `已匯出 ${list.length} 個範本。` });
+  }
+
+  /* 把匯入的範本接在現有清單後面，id 撞號就換一個，超過上限的略過 */
+  mergeTpls(raw) {
+    const add = readTpls(raw);
+    if (!add.length) return this.setState({ tplMsg: '匯入失敗：檔案裡沒有可用的範本。' });
+    const have = new Set((this.state.userTpls || []).map((x) => x.id));
+    const fresh = add.map((t, i) => (have.has(t.id) ? { ...t, id: `${t.id}_i${Date.now()}${i}` } : t));
+    const list = [...this.state.userTpls, ...fresh].slice(0, TPL_MAX);
+    const drop = this.state.userTpls.length + fresh.length - list.length;
+    this.putTpls(list, `已匯入 ${fresh.length - drop} 個範本${drop ? `（超過 ${TPL_MAX} 個，略過 ${drop} 個）` : ''}。`);
+  }
+
+  importTpls() {
+    const el = document.createElement('input');
+    el.type = 'file';
+    el.accept = 'application/json,.json';
+    el.onchange = () => {
+      const f = el.files && el.files[0];
+      if (!f) return;
+      const fr = new FileReader();
+      fr.onload = () => {
+        let data;
+        try { data = JSON.parse(String(fr.result)); }
+        catch (e) { return this.setState({ tplMsg: '匯入失敗：不是合法的 JSON 檔。' }); }
+        this.mergeTpls(data);
+      };
+      fr.onerror = () => this.setState({ tplMsg: '匯入失敗：讀不到檔案。' });
+      fr.readAsText(f);
+    };
+    el.click();
+  }
+
   /* ── 匯出 ── */
   stage() { return document.querySelector('table-3d'); }
 
@@ -1805,7 +2094,7 @@ ${inner}
         .n{font-size:11px;color:#8d877c;line-height:1.8;margin-top:24px}</style></head><body>
         <h1>訂製桌具報價單</h1><div class="sub">TABLE ATELIER · QUOTATION · 2026-08-31</div>
         <table>
-        ${row('品項', `訂製${(PRESETS[this.state.preset] || {}).name || '桌具'}　${p.length}×${Math.round(this.geo(p).D)}×${p.height} mm`)}
+        ${row('品項', `訂製${esc(this.presetName())}　${p.length}×${Math.round(this.geo(p).D)}×${p.height} mm`)}
         ${row('桌板外形', `${esc(this.shapeName(p))}　展開面積 ${(this.geo(p).topArea / 1e6).toFixed(2)} m²`)}
         ${row('材質／塗裝', `${MATS[p.material].name}／${MATS[p.material].finish ? '水性透明漆' : '美耐板飾面'}`)}
         ${row('結構', `${LEGS[this.geo(p).style].name} ${this.geo(p).corner ? `${this.geo(p).legN} 支` : ''}${p.apron && this.geo(p).corner ? '＋四周橫撐' : ''}${p.stretcher && this.geo(p).corner ? '＋下段加強樑' : ''}${p.drawers ? `＋抽屜 ${p.drawers} 具` : ''}`)}
@@ -1852,16 +2141,30 @@ ${inner}
       legName: LEGS[g.style].name,
       specJson: JSON.stringify({ ...p }),
       show3d: v === '3d' ? 'block' : 'none',
-      show2d: (v === 'draw' || v === 'explode' || v === 'cut') ? 'block' : 'none',
+      show2d: SHEET_VIEWS.indexOf(v) >= 0 ? 'block' : 'none',
       sheet: { __html: this.rawSheet(v) },
       spinLabel: this.state.spin ? 'STOP SPIN' : 'AUTO SPIN',
       note: this.state.note,
 
       presets: Object.keys(PRESETS).map((id) => ({
         id, name: PRESETS[id].name,
-        dim: `${PRESETS[id].length}×${PRESETS[id].width}`,
+        dim: `${PRESETS[id].length}×${window.TableGeom ? Math.round(window.TableGeom.depthOf(PRESETS[id])) : PRESETS[id].width}`,
         ...pick(this.state.preset === id),
       })),
+      userTpls: (this.state.userTpls || []).map((t) => ({
+        id: t.id, name: t.name, dim: this.tplDim(t), ...pick(this.state.preset === t.id),
+      })),
+      tplCount: `${(this.state.userTpls || []).length} / ${TPL_MAX}`,
+      tplName: this.state.tplName,
+      tplMsg: this.state.tplMsg,
+      tplMsgShow: this.state.tplMsg ? 'block' : 'none',
+      tplEmptyShow: (this.state.userTpls || []).length ? 'none' : 'block',
+      onTplName: (e) => this.setState({ tplName: e.currentTarget.value.slice(0, 24) }),
+      saveTpl: () => this.saveTpl(),
+      loadTpl: (e) => this.loadTpl(e.currentTarget.dataset.k),
+      delTpl: (e) => this.delTpl(e.currentTarget.dataset.k),
+      exportTpls: () => this.exportTpls(),
+      importTpls: () => this.importTpls(),
       dims: DIMS.map((d) => ({ ...d, val: p[d.k] })),
       legOpts: Object.keys(LEGS).map((id) => ({ id, name: LEGS[id].name, icon: { __html: LEGS[id].icon }, ...pick(p.legStyle === id) })),
       matOpts: Object.keys(MATS).map((id) => ({
@@ -2062,8 +2365,8 @@ ${inner}
       setMat: (e) => this.set('material', e.currentTarget.dataset.k),
       setDrawers: (e) => this.set('drawers', Number(e.currentTarget.dataset.k)),
       toggle: (e) => { const k = e.currentTarget.dataset.k; this.set(k, !p[k]); },
-      zoomW: Math.round(1400 * this.state.zoom / 100) + 'px',
-      zoomBar: (v === 'draw' || v === 'explode' || v === 'cut') ? 'flex' : 'none',
+      zoomW: Math.round(SHEET_BASE * this.state.zoom / 100) + 'px',
+      zoomBar: SHEET_VIEWS.indexOf(v) >= 0 ? 'flex' : 'none',
       hints: this.state.ready3d ? 'flex' : 'none',
       overlayCursor: this.state.tool === 'text' ? 'crosshair' : 'default',
       toolOpts: [
@@ -2128,14 +2431,15 @@ ${inner}
       setTool: (e) => this.setState({ tool: e.currentTarget.dataset.k, note: e.currentTarget.dataset.k === 'text' ? '在圖上點一下即可放置文字。' : '拖曳文字可移動，雙擊可編輯。' }),
       clearAnnos: () => this.putAnnos([]),
       zoomLabel: this.state.zoom + '%',
-      zoomIn: () => this.setState((s) => ({ zoom: Math.min(400, s.zoom + 25) })),
-      zoomOut: () => this.setState((s) => ({ zoom: Math.max(50, s.zoom - 25) })),
-      zoomFit: () => {
-        const box = document.querySelector('[data-sheet-scroll]');
-        const w = box ? box.clientWidth - 36 : 1400;
-        this.setState({ zoom: Math.max(50, Math.min(400, Math.round(w / 1400 * 100))) });
+      zoomIn: () => this.setZoom(this.state.zoom + 25),
+      zoomOut: () => this.setZoom(this.state.zoom - 25),
+      zoomFit: () => this.fitZoom(),
+      setView: (e) => {
+        const k = e.currentTarget.dataset.k;
+        const refit = SHEET_VIEWS.indexOf(k) >= 0 && this.state.zoomAuto;
+        this.setState({ view: k });
+        if (refit) setTimeout(() => this.fitZoom(), 0);
       },
-      setView: (e) => this.setState({ view: e.currentTarget.dataset.k }),
       toggleSpin: () => {
         const st = this.stage();
         const next = !this.state.spin;
